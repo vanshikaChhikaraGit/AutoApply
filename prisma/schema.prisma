@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" // or "mysql", "sqlite", etc.
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(uuid())
+  externalId        String    @unique
+  email             String    @unique
+  first_name        String
+  last_name         String
+  name              String
+  phone_number      String?
+  current_location  String?
+  ethnicity         String?
+  country           String?
+  state             String?
+  address           String?
+  dob               DateTime?
+  gender            String?
+  skills            String[]
+  is_lgbtq          Boolean?  @default(false)
+  has_disability    Boolean?  @default(false)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  // Relationships
+  education        Education[]
+  workExperience   WorkExperience[]
+  resume           Resume[]
+  backlog          Backlog[]
+  jobPreferences   JobPreferences[]
+  links            Links[]
+
+  @@map("users")
+}
+
+model Education {
+  id              String    @id @default(uuid())
+  institution_name String
+  degree          String?
+  major           String?
+  cgpa            Float?
+  enrollment_no   String?
+  start_year      DateTime?
+  start_month     DateTime?
+  end_month       DateTime?
+  end_year        DateTime?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  // Foreign Key
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@map("education")
+}
+
+model WorkExperience {
+  id              String    @id @default(uuid())
+  company_name    String
+  location        String?
+  position        String?
+  job_type        String?
+  start_year      DateTime?
+  start_month     DateTime?
+  end_month       DateTime?
+  end_year        DateTime?
+  is_current      Boolean?  @default(false)
+  description     String?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  // Foreign Key
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@map("work_experience")
+}
+
+model Resume {
+  id                String    @id @default(uuid())
+  resume_file_path  String?
+  resume_drive_link String?
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  // Foreign Key
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+
+  @@map("resumes")
+}
+
+model Backlog {
+  id              String    @id @default(uuid())
+  active_backlogs Int?
+  dead_backlogs   Int?
+  total_backogs   Int?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  // Foreign Key
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@map("backlogs")
+}
+
+model JobPreferences {
+  id                      String    @id @default(uuid())
+  is_authorized_to_work    Boolean?  @default(false)
+  visa_sponsorship_requirement Boolean? @default(false)
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
+
+  // Foreign Key
+  userId                  String
+  user                    User      @relation(fields: [userId], references: [id])
+
+  @@map("job_preferences")
+}
+
+model Links {
+  id              String    @id @default(uuid())
+  linkedin        String?
+  github          String?
+  portfolio       String?
+  other_links     Json?     // Store as JSON array
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  // Foreign Key
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+
+  @@map("links")
+}
