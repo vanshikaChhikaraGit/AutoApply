@@ -1,4 +1,5 @@
 import Navbar from "@/components/Navbar"
+import { AuthProvider } from "@/context/Auth-Context"
 
 export default function OnboardingLayout({
     children,
@@ -7,15 +8,15 @@ export default function OnboardingLayout({
   }) {
    
     return (
-      <html lang="en">
         <body lang="en">
           {/* Layout UI */}
           {/* Place children where you want to render a page or nested layout */}
           <Navbar></Navbar>
           <main>
+            <AuthProvider>
             {children}
+            </AuthProvider>
             </main>
         </body>
-      </html>
     )
   }

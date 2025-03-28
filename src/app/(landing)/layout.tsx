@@ -5,7 +5,6 @@ export default function LandingLayout({
   }) {
    
     return (
-      <html lang="en">
         <body lang="en">
           {/* Layout UI */}
           {/* Place children where you want to render a page or nested layout */}
@@ -14,6 +13,5 @@ export default function LandingLayout({
             {children}
             </main>
         </body>
-      </html>
     )
   }

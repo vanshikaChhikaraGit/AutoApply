@@ -6,13 +6,12 @@ datasource db {
   provider = "postgresql" // or "mysql", "sqlite", etc.
   url      = env("DATABASE_URL")
 }
-
 model User {
   id                String    @id @default(uuid())
   externalId        String    @unique
   email             String    @unique
-  first_name        String
-  last_name         String
+  first_name        String?
+  last_name         String?
   name              String
   phone_number      String?
   current_location  String?
@@ -46,6 +45,8 @@ model Education {
   major           String?
   cgpa            Float?
   enrollment_no   String?
+  current_year_of_study String?
+  current_semester   String?
   start_year      DateTime?
   start_month     DateTime?
   end_month       DateTime?
