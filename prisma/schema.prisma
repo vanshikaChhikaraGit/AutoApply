@@ -47,10 +47,10 @@ model Education {
   enrollment_no   String?
   current_year_of_study String?
   current_semester   String?
-  start_year      DateTime?
-  start_month     DateTime?
-  end_month       DateTime?
-  end_year        DateTime?
+  start_year      Int?
+  start_month     Int?
+  end_month       Int?
+  end_year        Int?
   created_at      DateTime  @default(now())
   updated_at      DateTime  @updatedAt
 
@@ -99,6 +99,7 @@ model Resume {
 
 model Backlog {
   id              String    @id @default(uuid())
+  has_backlog     String?
   active_backlogs Int?
   dead_backlogs   Int?
   total_backogs   Int?
@@ -114,8 +115,8 @@ model Backlog {
 
 model JobPreferences {
   id                      String    @id @default(uuid())
-  is_authorized_to_work    Boolean?  @default(false)
-  visa_sponsorship_requirement Boolean? @default(false)
+  is_authorized_to_work    String? 
+  visa_sponsorship_requirement String?
   created_at              DateTime  @default(now())
   updated_at              DateTime  @updatedAt
 

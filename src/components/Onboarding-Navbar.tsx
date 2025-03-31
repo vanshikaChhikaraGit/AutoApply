@@ -7,8 +7,8 @@ import { MaxWidthWrapper } from "./max-width-wrapper";
 const steps = [
   { path: "/onboarding/profile", label: "Profile" },
   { path: "/onboarding/education", label: "Education" },
-  { path: "/onboarding/experience", label: "Experience" },
-  { path: "/onboarding/work-auth", label: "Work Authorization" },
+  { path: "/onboarding/carryover", label: "Carry Over" },
+  { path: "/onboarding/workauth", label: "Work Authorization" },
   { path: "/onboarding/skills", label: "Skills" },
   { path: "/onboarding/personal", label: "Personal" },
   { path: "/onboarding/links", label: "Links" },

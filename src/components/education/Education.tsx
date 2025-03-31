@@ -8,7 +8,7 @@ type Props = {}
 function Education({}: Props) {
   return (
     <MaxWidthWrapper classname={""}>
-        <Heading>Add your education</Heading>
+        <Heading className='text-center'>Add your education</Heading>
         <EducationForm></EducationForm>
     </MaxWidthWrapper>
   )
