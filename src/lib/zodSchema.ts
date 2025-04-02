@@ -33,3 +33,10 @@ export const workAuthFormSchema = z.object({
   is_authorized_to_work : z.string({message:"This field is required."}),
   require_visa_sponsorship:z.string({message:"This field is required."})
 })
+
+export const eeoFormSchema = z.object({
+  ethnicity: z.string(), 
+  disability: z.enum(["Yes", "No", "Prefer Not To Say"]),
+  lgbtq: z.enum(["Yes", "No", "Prefer Not To Say"]),
+  gender: z.enum(["Male", "Female", "Non-Binary", "Prefer Not To Say"]),
+});

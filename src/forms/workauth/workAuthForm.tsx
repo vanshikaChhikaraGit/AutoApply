@@ -53,7 +53,7 @@ const WorkAuthForm = (props: Props) => {
                 ),
               });
               setLoading(false)
-              router.push('/onboarding/skills') 
+              router.push('/onboarding/eeo') 
             } else {
                 setLoading(false)
               toast("Error 😭", {
@@ -142,7 +142,7 @@ const WorkAuthForm = (props: Props) => {
           </Button>
         </form>
       </Form>
-      <Link href={"/onboarding/skills"}
+      <Link href={"/onboarding/eeo"}
             className="underline text-gray-600 text-md text-center m-4 flex justify-center font-semibold"
             > {" "} Skip this step
             </Link>

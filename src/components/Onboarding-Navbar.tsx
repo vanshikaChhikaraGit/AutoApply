@@ -9,6 +9,7 @@ const steps = [
   { path: "/onboarding/education", label: "Education" },
   { path: "/onboarding/carryover", label: "Carry Over" },
   { path: "/onboarding/workauth", label: "Work Authorization" },
+  { path: "/onboarding/eeo", label: "EEO" },
   { path: "/onboarding/skills", label: "Skills" },
   { path: "/onboarding/personal", label: "Personal" },
   { path: "/onboarding/links", label: "Links" },

@@ -22,8 +22,8 @@ model User {
   dob               DateTime?
   gender            String?
   skills            String[]
-  is_lgbtq          Boolean?  @default(false)
-  has_disability    Boolean?  @default(false)
+  is_lgbtq          String?  
+  has_disability    String?  
   created_at        DateTime  @default(now())
   updated_at        DateTime  @updatedAt
 
