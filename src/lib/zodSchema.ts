@@ -1,5 +1,5 @@
 import { z } from "zod"
-
+const phoneRegex = /^[0-9]{10}$/;
 export const profileFormSchema = z.object({
     firstName: z.string().min(3, { message: "First name should be at least 3 characters long." }),
     lastName: z.string().min(3, { message: "Last name should be at least 3 characters long." }),
@@ -40,3 +40,18 @@ export const eeoFormSchema = z.object({
   lgbtq: z.enum(["Yes", "No", "Prefer Not To Say"]),
   gender: z.enum(["Male", "Female", "Non-Binary", "Prefer Not To Say"]),
 });
+
+export const skillsFormSchema = z.object({
+  skills: z.array(z.string()).min(1, "At least one skill is required"),
+});
+
+export const personalFormSchema = z.object({
+  state:z.string().min(1,{message:"State name should be atleast 1 character long"}),
+  country:z.string().min(1,{message:"Country name should be atleast 1 character long"}),
+  phone_number: z
+    .string()
+    .min(10, "Phone number must be at least 10 digits")
+    .regex(phoneRegex, "Phone number must be valid"),
+  address:z.string().min(1,{message:"Address should be atleast 1 character long"}),
+  dob:z.string()
+})

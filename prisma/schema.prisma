@@ -14,12 +14,11 @@ model User {
   last_name         String?
   name              String
   phone_number      String?
-  current_location  String?
   ethnicity         String?
   country           String?
   state             String?
   address           String?
-  dob               DateTime?
+  dob               String?
   gender            String?
   skills            String[]
   is_lgbtq          String?  

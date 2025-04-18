@@ -39,7 +39,7 @@ export async function onIntgrateUserEEOInfo({ethnicity,disability,lgbtq,gender}:
         }
         return { status: 200, message: "Updated user's EEO details." };
       } catch (error) {
-        console.error("Error in updating user work auth info server action:", error);
+        console.error("Error in updating user eeo info server action:", error);
         return { status: 400, message: "Error! Couldn't update user's EEO details" };
       }
 }

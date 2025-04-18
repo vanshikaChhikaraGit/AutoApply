@@ -18,7 +18,7 @@ const Page = () => {
   useEffect(() => {
     console.log(success)
     if (success) {
-      router.replace("/onborading/profile");
+      router.replace("/onboarding/profile");
     }
   }, [success, router,loading]);
 

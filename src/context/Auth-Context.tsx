@@ -22,9 +22,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(true);
       try {
         const result = await syncUserToDB();
+       
         console.log("Backend response:", result);
   
         if ("success" in result && result.success === true) {
+          
           setSuccess(true);
         }
       } catch (error) {

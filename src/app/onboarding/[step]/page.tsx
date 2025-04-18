@@ -5,7 +5,9 @@ import Education from "@/components/education/Education";
 import EEOcomponent from "@/components/eeo/EEOComp";
 import { MaxWidthWrapper } from "@/components/max-width-wrapper";
 import OnboardingNavbar from "@/components/Onboarding-Navbar";
+import PersonalInfoComponent from "@/components/personal/personalComponent";
 import Profile from "@/components/profile/Profile";
+import SkillsComponent from "@/components/skills/skillsComp";
 import WorkAuthComponent from "@/components/workauth/WorkAuth";
 import { useParams } from "next/navigation";
 import React from "react";
@@ -23,7 +25,9 @@ const OnboardingStep = () => {
         {step === "carryover" && <div className="p-2 m-3"><CarryOver></CarryOver></div>}
         {step === "workauth" && <div className="p-2 m-3"><WorkAuthComponent></WorkAuthComponent></div>}
         {step === "eeo" && <div className="p-2 m-3"><EEOcomponent></EEOcomponent></div>}
-        {!["profile", "education","carryover","workauth","eeo"].includes(step) && (
+        {step === "skills" && <div className="p-2 m-3"><SkillsComponent></SkillsComponent></div>}
+        {step === "personal" && <div className="p-2 m-3"><PersonalInfoComponent></PersonalInfoComponent></div>}
+        {!["profile", "education","carryover","workauth","eeo","skills","personal"].includes(step) && (
           <p className="text-red-500">Invalid step! Please go back.</p>
         )}
       </MaxWidthWrapper>

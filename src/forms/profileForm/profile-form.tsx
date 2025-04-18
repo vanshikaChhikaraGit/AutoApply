@@ -28,6 +28,8 @@ import { MdAddPhotoAlternate } from "react-icons/md";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { LoadingSpinner } from "@/components/loading-spinner";
+import { UploadButton } from "@/utils/uploadthing";
+import { ArrowUpNarrowWide, Check, CloudUpload } from "lucide-react";
 
 type Props = {};
 const uploadClient = new UploadClient({
@@ -35,6 +37,7 @@ const uploadClient = new UploadClient({
 });
 const ProfileForm = (props: Props) => {
   const [loading, setLoading] = useState(false);
+  const [uploaded, setUploaded] = useState(false);
   const router = useRouter();
   const userProfileForm = useForm<z.infer<typeof profileFormSchema>>({
     resolver: zodResolver(profileFormSchema),
@@ -48,13 +51,7 @@ const ProfileForm = (props: Props) => {
 
   const onHandleSubmit = async (values: z.infer<typeof profileFormSchema>) => {
     try {
-      // Upload resume to Uploadcare
       setLoading(true);
-      const uploadResume = await uploadClient.uploadFile(values.resume);
-      if (!uploadResume) {
-        toast("Couldn't upload resume :(");
-        return;
-      }
 
       const userName = values.firstName + " " + values.lastName;
 
@@ -63,7 +60,7 @@ const ProfileForm = (props: Props) => {
         name: userName,
         firstName: values.firstName,
         lastName: values.lastName,
-        resume_uploadcare_uuid: uploadResume.uuid,
+        resume_uploadcare_uuid: values.resume,
         resume_google_drive_link: values.resumeGoogleDriveLink,
       });
 
@@ -152,21 +149,34 @@ const ProfileForm = (props: Props) => {
                     <p className="text-gray-500 text-xs mb-5">
                       PDF file upto 5 MB.{" "}
                     </p>
-                    {/* Uploadcare Uploader */}
-                    <FileUploaderRegular
-                      sourceList="local, gdrive"
-                      classNameUploader="uc-light"
-                      pubkey={
-                        process.env.NEXT_PUBLIC_UPLOAD_CARE_PUBLIC_KEY as string
-                      }
-                      accept="application/pdf"
-                      data-max-size="5242880"
-                      onChange={(output) => {
-                        if (output.successEntries.length > 0) {
-                          field.onChange(output.successEntries[0].uuid);
-                        }
-                      }}
-                    />
+                    {/* uploadthing Uploader */}
+                    <label className="cursor-pointer">
+                      <span className="flex items-center px-4 py-2 bg-gray-200/40 text-black/80 text-xs rounded-md hover:bg-brand-300 transition">
+                        {uploaded ? (
+                          <>
+                            Uploaded <Check />
+                          </>
+                        ) : (
+                          <>
+                            Upload Resume{" "}
+                            <CloudUpload size={15} className="ml-1" />
+                          </>
+                        )}
+                      </span>
+                      <UploadButton
+                        endpoint="resumeUploader"
+                        className="hidden" // hide UploadThing's default styles
+                        onClientUploadComplete={(res) => {
+                          const file = res[0];
+                          field.value = file.ufsUrl;
+                          setUploaded(true);
+                          toast.success("File upload successful");
+                        }}
+                        onUploadError={(error: Error) => {
+                          toast.error("Couldn't upload resume :(");
+                        }}
+                      />
+                    </label>
                   </div>
                 </FormControl>
               </FormItem>
