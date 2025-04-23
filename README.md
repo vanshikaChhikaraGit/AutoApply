@@ -1,6 +1,8 @@
 # 🎯 University Auto-Fill Solution
 
 A cross-platform autofill solution designed to automate data entry across dynamic web forms within university systems. This project consists of a **Chrome Extension** for intelligent form filling and a **full-stack web platform** for user profile management.
+
+
 ![image](https://github.com/user-attachments/assets/a1a0099e-21df-431f-873f-58c54d8c70a2)
 
 ---
