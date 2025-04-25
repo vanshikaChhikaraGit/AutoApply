@@ -30,6 +30,7 @@ import Link from "next/link";
 import { LoadingSpinner } from "@/components/loading-spinner";
 import { UploadButton } from "@/utils/uploadthing";
 import { ArrowUpNarrowWide, Check, CloudUpload } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Props = {};
 const uploadClient = new UploadClient({
@@ -54,13 +55,14 @@ const ProfileForm = (props: Props) => {
       setLoading(true);
 
       const userName = values.firstName + " " + values.lastName;
-
+      console.log(values.resume)
       // Add user details and resume to DB
       const onAddUserProfileToDB = await onIntegerateUserProfile({
+       
         name: userName,
         firstName: values.firstName,
         lastName: values.lastName,
-        resume_uploadcare_uuid: values.resume,
+        resume_file_path_link: values.resume,
         resume_google_drive_link: values.resumeGoogleDriveLink,
       });
 
@@ -129,59 +131,50 @@ const ProfileForm = (props: Props) => {
 
           {/* upload resume pdf */}
           <FormField
-            control={userProfileForm.control}
-            name="resume"
-            render={({ field }) => (
-              <FormItem className="m-4">
-                <FormLabel>
-                  Upload your
-                  <span className="text-brand-500 font-semibold text-lg">
-                    Resume
-                  </span>
-                </FormLabel>
-                <FormControl>
-                  <div className="flex flex-col items-center justify-center w-full border-2 border-gray-500 border-dotted p-4 rounded-lg">
-                    {/* Upload Icon */}
-                    <MdAddPhotoAlternate
-                      size={35}
-                      className="text-brand-500"
-                    ></MdAddPhotoAlternate>
-                    <p className="text-gray-500 text-xs mb-5">
-                      PDF file upto 5 MB.{" "}
-                    </p>
-                    {/* uploadthing Uploader */}
-                    <label className="cursor-pointer">
-                      <span className="flex items-center px-4 py-2 bg-gray-200/40 text-black/80 text-xs rounded-md hover:bg-brand-300 transition">
-                        {uploaded ? (
-                          <>
-                            Uploaded <Check />
-                          </>
-                        ) : (
-                          <>
-                            Upload Resume{" "}
-                            <CloudUpload size={15} className="ml-1" />
-                          </>
-                        )}
-                      </span>
-                      <UploadButton
-                        endpoint="resumeUploader"
-                        className="hidden" // hide UploadThing's default styles
-                        onClientUploadComplete={(res) => {
-                          const file = res[0];
-                          field.value = file.ufsUrl;
-                          setUploaded(true);
-                          toast.success("File upload successful");
-                        }}
-                        onUploadError={(error: Error) => {
-                          toast.error("Couldn't upload resume :(");
-                        }}
-                      />
-                    </label>
-                  </div>
-                </FormControl>
-              </FormItem>
-            )}
-          ></FormField>
+  control={userProfileForm.control}
+  name="resume"
+  render={({ field }) => (
+    <FormItem className="m-4">
+      <FormLabel>
+        Upload your
+        <span className="text-brand-500 font-semibold text-lg">Resume</span>
+      </FormLabel>
+      <FormControl>
+        <div className="flex flex-col items-center justify-center w-full border-2 border-gray-500 border-dotted p-4 rounded-lg">
+          <MdAddPhotoAlternate size={35} className="text-brand-500" />
+          <p className="text-gray-500 text-xs mb-5">PDF file upto 5 MB.</p>
+          <label className="cursor-pointer">
+            <span className={cn((uploaded?"bg-gray-500":"bg-brand-300"),"flex items-center px-4 py-2 bg-brand-200 text-black/80 text-xs rounded-md")}>
+              {uploaded ? (
+                <>
+                  Uploaded <Check />
+                </>
+              ) : (
+                <>
+                  Upload Resume <CloudUpload size={15} className="ml-1" />
+                </>
+              )}
+            </span>
+            <UploadButton
+              endpoint="resumeUploader"
+              className="hidden"
+              onClientUploadComplete={(res) => {
+                // Use field.onChange instead of directly setting field.value
+                field.onChange(res[0].ufsUrl); // or res[0].ufsUrl depending on what UploadThing returns
+                setUploaded(true);
+                toast.success("File upload successful");
+              }}
+              onUploadError={(error: Error) => {
+                toast.error("Couldn't upload resume :(");
+                console.error(error);
+              }}
+            />
+          </label>
+        </div>
+      </FormControl>
+    </FormItem>
+  )}
+/>
 
           {/* upload resume drive link  */}
           <FormField

@@ -8,17 +8,17 @@ const JWT_ISSUER = "http://localhost";
 
 export async function GET(request: Request) {
   try {
-    const authorization = request.headers.get('Authorization');
+    const authorization = request.headers.get("Authorization");
     if (!authorization || !authorization.startsWith("Bearer")) {
       return NextResponse.json(
         { error: "Authorization token missing or malformed" },
         { status: 400 }
       );
     }
-    const jwt = authorization.slice(7)
-const { payload } = await jose.jwtVerify(jwt,JWT_SECRET,{
-  issuer:JWT_ISSUER
-})
+    const jwt = authorization.slice(7);
+    const { payload } = await jose.jwtVerify(jwt, JWT_SECRET, {
+      issuer: JWT_ISSUER,
+    });
 
     if (!payload) {
       return NextResponse.json(
@@ -26,10 +26,29 @@ const { payload } = await jose.jwtVerify(jwt,JWT_SECRET,{
         { status: 401 }
       );
     }
-    console.log(payload)
-    return NextResponse.json({ userId: payload }, { status: 200 });
+
+    const userId = payload.userId
+    console.log(userId);
+    const userInfo = await getUserInfo(userId);
+    return NextResponse.json({ userInfo: userInfo }, { status: 200 });
   } catch (err) {
-    console.log(err)
+    console.log(err);
     return NextResponse.json({ error: "failed to load data" });
   }
+}
+
+async function getUserInfo(userId: any) {
+  return await prisma.user.findUnique({
+    where: {
+      id: userId,
+    },
+    include: {
+      education: true,
+      workExperience: true,
+      resume: true,
+      backlog: true,
+      jobPreferences: true,
+      links: true,
+    },
+  });
 }

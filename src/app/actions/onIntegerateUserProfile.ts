@@ -7,7 +7,7 @@ type inputArgs = {
   name: string;
   firstName: string;
   lastName: string;
-  resume_uploadcare_uuid: string;
+  resume_file_path_link: string;
   resume_google_drive_link: string;
 };
 
@@ -15,7 +15,7 @@ export const onIntegerateUserProfile = async ({
   name,
   firstName,
   lastName,
-  resume_uploadcare_uuid,
+  resume_file_path_link,
   resume_google_drive_link,
 }: inputArgs) => {
   //find user
@@ -49,7 +49,7 @@ export const onIntegerateUserProfile = async ({
   const addResumeDetails = await prisma.resume.create({
     data: {
       userId: existingUser.id,
-      resume_file_path: resume_uploadcare_uuid,
+      resume_file_path: resume_file_path_link,
       resume_drive_link: resume_google_drive_link,
     },
   });

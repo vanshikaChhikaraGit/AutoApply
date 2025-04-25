@@ -60,7 +60,7 @@ export async function syncUserToDB(): Promise<
 }
 
 async function generateJWT(userId: string) {
-  const token = await new jose.SignJWT({ userId })
+  const token = await new jose.SignJWT({ userId:userId })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuer(JWT_ISSUER)
     .setExpirationTime("30d")
