@@ -1,10 +1,12 @@
+export const dynamic = 'force-dynamic';
+
 import { getUserData } from "@/app/actions/fetchUserInfo/fetchUserData";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import * as jose from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
-const JWT_ISSUER = "http://localhost";
+const JWT_ISSUER = process.env.JWT_ISSUER
 
 export async function GET(request: Request) {
   try {
