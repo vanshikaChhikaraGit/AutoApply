@@ -1,49 +1,119 @@
-export const dynamic = 'force-dynamic';
+// export const dynamic = 'force-dynamic';
 
-import { getUserData } from "@/app/actions/fetchUserInfo/fetchUserData";
+// import { getUserData } from "@/app/actions/fetchUserInfo/fetchUserData";
+// import { NextResponse } from "next/server";
+// import { prisma } from "@/lib/prisma";
+// import * as jose from "jose";
+
+// const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
+// const JWT_ISSUER = process.env.JWT_ISSUER
+
+// export async function GET(request: Request) {
+//   try {
+//     const authorization = request.headers.get("Authorization");
+//     if (!authorization || !authorization.startsWith("Bearer")) {
+//       return NextResponse.json(
+//         { error: "Authorization token missing or malformed" },
+//         { status: 400 }
+//       );
+//     }
+//     const jwt = authorization.slice(7);
+//     const { payload } = await jose.jwtVerify(jwt, JWT_SECRET, {
+//       issuer: JWT_ISSUER,
+//     });
+
+//     if (!payload) {
+//       return NextResponse.json(
+//         { error: "Invalid session token" },
+//         { status: 401 }
+//       );
+//     }
+
+//     const userId = payload.userId
+//     console.log(userId);
+//     const userInfo = await getUserInfo(userId);
+//     return NextResponse.json({ userInfo: userInfo }, { status: 200 });
+//   } catch (err) {
+//     console.log(err);
+//     return NextResponse.json({ error: "failed to load data" });
+//   }
+// }
+
+// async function getUserInfo(userId: any) {
+//   return await prisma.user.findUnique({
+//     where: {
+//       id: userId,
+//     },
+//     include: {
+//       education: true,
+//       workExperience: true,
+//       resume: true,
+//       backlog: true,
+//       jobPreferences: true,
+//       links: true,
+//     },
+//   });
+// }
+
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import * as jose from "jose";
 
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
-const JWT_ISSUER = process.env.JWT_ISSUER
+const JWT_ISSUER = process.env.JWT_ISSUER;
+
+// This forces the route to be dynamic (not statically optimized)
+export const dynamic = 'force-dynamic';
+
+interface JWTPayload {
+  userId: string;
+  [key: string]: any;
+}
 
 export async function GET(request: Request) {
   try {
-    const authorization = request.headers.get("Authorization");
-    if (!authorization || !authorization.startsWith("Bearer")) {
+    // Early return if running in static generation
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
       return NextResponse.json(
-        { error: "Authorization token missing or malformed" },
+        { error: "API unavailable during build" },
         { status: 400 }
       );
     }
+
+    const authorization = request.headers.get("Authorization");
+    if (!authorization?.startsWith("Bearer ")) {
+      return NextResponse.json(
+        { error: "Authorization token missing or malformed" },
+        { status: 401 }
+      );
+    }
+
     const jwt = authorization.slice(7);
-    const { payload } = await jose.jwtVerify(jwt, JWT_SECRET, {
+    const { payload } = await jose.jwtVerify<JWTPayload>(jwt, JWT_SECRET, {
       issuer: JWT_ISSUER,
     });
 
-    if (!payload) {
+    if (!payload?.userId) {
       return NextResponse.json(
         { error: "Invalid session token" },
         { status: 401 }
       );
     }
 
-    const userId = payload.userId
-    console.log(userId);
-    const userInfo = await getUserInfo(userId);
-    return NextResponse.json({ userInfo: userInfo }, { status: 200 });
+    const userInfo = await getUserInfo(payload.userId);
+    return NextResponse.json({ userInfo }, { status: 200 });
   } catch (err) {
-    console.log(err);
-    return NextResponse.json({ error: "failed to load data" });
+    console.error("API Error:", err);
+    return NextResponse.json(
+      { error: "Failed to load data" },
+      { status: 500 }
+    );
   }
 }
 
-async function getUserInfo(userId: any) {
+async function getUserInfo(userId: string) {
   return await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
+    where: { id: userId },
     include: {
       education: true,
       workExperience: true,
