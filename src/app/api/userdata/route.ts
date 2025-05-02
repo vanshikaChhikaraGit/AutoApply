@@ -59,11 +59,12 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import * as jose from "jose";
 
+// Explicitly opt out of static generation
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET);
 const JWT_ISSUER = process.env.JWT_ISSUER;
-
-// This forces the route to be dynamic (not statically optimized)
-export const dynamic = 'force-dynamic';
 
 interface JWTPayload {
   userId: string;
@@ -71,19 +72,19 @@ interface JWTPayload {
 }
 
 export async function GET(request: Request) {
-  try {
-    // Early return if running in static generation
-    if (process.env.NEXT_PHASE === 'phase-production-build') {
-      return NextResponse.json(
-        { error: "API unavailable during build" },
-        { status: 400 }
-      );
-    }
+  // Return early during build process
+  if (process.env.NEXT_PHASE === 'phase-production-build') {
+    return NextResponse.json(
+      { message: "API route not available during build" },
+      { status: 200 }
+    );
+  }
 
+  try {
     const authorization = request.headers.get("Authorization");
     if (!authorization?.startsWith("Bearer ")) {
       return NextResponse.json(
-        { error: "Authorization token missing or malformed" },
+        { error: "Missing or invalid authorization token" },
         { status: 401 }
       );
     }
@@ -95,32 +96,36 @@ export async function GET(request: Request) {
 
     if (!payload?.userId) {
       return NextResponse.json(
-        { error: "Invalid session token" },
+        { error: "Invalid token payload" },
         { status: 401 }
       );
     }
 
-    const userInfo = await getUserInfo(payload.userId);
+    const userInfo = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      include: {
+        education: true,
+        workExperience: true,
+        resume: true,
+        backlog: true,
+        jobPreferences: true,
+        links: true,
+      },
+    });
+
+    if (!userInfo) {
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
+    }
+
     return NextResponse.json({ userInfo }, { status: 200 });
-  } catch (err) {
-    console.error("API Error:", err);
+  } catch (error) {
+    console.error("API Error:", error);
     return NextResponse.json(
-      { error: "Failed to load data" },
+      { error: "Internal server error" },
       { status: 500 }
     );
   }
-}
-
-async function getUserInfo(userId: string) {
-  return await prisma.user.findUnique({
-    where: { id: userId },
-    include: {
-      education: true,
-      workExperience: true,
-      resume: true,
-      backlog: true,
-      jobPreferences: true,
-      links: true,
-    },
-  });
 }
